@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hz.dao.ImageMapper">
+
+    <insert id="saveImage" useGeneratedKeys="true"  keyProperty="id" keyColumn="id" parameterType="com.hz.model.Image" >
+        insert into image (id, type, image_num ,category )
+        values (#{id,jdbcType=INTEGER}, #{type,jdbcType=VARCHAR}, 1 , #{category,jdbcType=VARCHAR} )
+    </insert>
+
+    <insert id="saveImageUrl" useGeneratedKeys="true"  keyProperty="id" keyColumn="id" parameterType="com.hz.model.Image" >
+        insert into image_url (id, image_url, image_id ,image_name ,image_old_name,image_name_suffix,upload_time,state,uploader,which_pic )
+        values (#{id,jdbcType=INTEGER}, #{imageUrl,jdbcType=VARCHAR}, #{imageId,jdbcType=INTEGER} , #{imageName,jdbcType=VARCHAR}
+         , #{imageOldName,jdbcType=VARCHAR} , #{imageNameSuffix,jdbcType=VARCHAR} , now()
+         , #{state,jdbcType=INTEGER}, #{uploader,jdbcType=INTEGER} , #{whichPic,jdbcType=INTEGER})
+    </insert>
+
+    <update id="updateImage" parameterType="com.hz.model.Image" useGeneratedKeys="true"  keyProperty="id" keyColumn="id">
+        UPDATE image
+        SET
+        image_num = image_num +1
+        WHERE
+        id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateImageUrl" parameterType="com.hz.model.ImageUrl" useGeneratedKeys="true"  keyProperty="id" keyColumn="id">
+        UPDATE image_url
+        SET
+        state = 0
+        WHERE
+        id = #{imageUrlId,jdbcType=INTEGER}
+    </update>
+
+    <!--select id id , image_url imageUrl ,image_id imageId ,image_name imageName ,image_old_name imageOldName ,-->
+    <!--image_name_suffix  imageNameSuffix ,state state ,uploader uploader ,upload_time uploadTime ,which_pic whichPic  from image_url-->
+    <!--where image_id = #{imageId} and state = 1-->
+
+    <select id="queryImageUrl" parameterType="com.hz.model.ImageUrl" resultType="com.hz.model.ImageUrl">
+        select id id , image_url imageUrl ,image_id imageId  , state state  ,upload_time uploadTime ,max(which_pic) whichPic  from image_url
+         where image_id = #{imageId} and state = 1
+    </select>
+
+    <select id="queryImageUrl1" parameterType="com.hz.model.ImageUrl" resultType="com.hz.model.ImageUrl">
+        select id id , image_url imageUrl ,image_id imageId  , state state  ,upload_time uploadTime ,max(which_pic)+1 whichPic  from image_url
+        where id = #{imageUrlId} and state = 1
+    </select>
+
+    <select id="queryImageList" parameterType="com.hz.model.ImageUrl" resultType="com.hz.model.ImageUrl">
+        select id imageUrlId , image_url imageUrl ,image_id imageId ,image_name imageName ,image_old_name imageOldName ,
+         image_name_suffix  imageNameSuffix ,state state ,uploader uploader ,upload_time uploadTime  from image_url where image_id=#{imageId}
+    </select>
+
+</mapper>
